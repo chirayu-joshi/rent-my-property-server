@@ -34,7 +34,7 @@ const storage = new GridFsStorage({
         const fileInfo = {
           filename: filename,
           bucketName: 'uploads',
-          metadata: { 
+          metadata: {
             uploaderId: req.userData.userId,
             temp: true
           }
@@ -58,5 +58,28 @@ router.post('/step2/propertyImage', upload.array('file', 20), (req, res, next) =
     message: "Images saved successfully. "
   });
 });
+
+// This route provides filenames.
+// Conditions: userId, temp=true
+router.get('/step2/propertyImage', (req, res, next) => {
+  gfs.files
+    .find({
+      metadata: {
+        uploaderId: req.userData.userId,
+        temp: true
+      }
+    })
+    .toArray((err, files) => {
+      if (!files || files.length === 0) {
+        return res.status(404).json({
+          error: 'No file exist'
+        });
+      }
+      return res.json(files);
+    });
+});
+
+// Implement delete route for deleting 
+// images from girdfs if user discard changes.
 
 module.exports = router;

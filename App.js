@@ -32,5 +32,6 @@ app.use(bodyParser.json());
 app.use('/api/signIn', require('./routes/signIn'));
 app.use('/api/signUp', require('./routes/signUp'));
 app.use('/api/host', checkAuth, require('./routes/host'));
+app.use('/api/images', require('./routes/images'));
 
 module.exports = app;

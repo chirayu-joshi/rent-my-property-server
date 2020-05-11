@@ -33,7 +33,11 @@ const storage = new GridFsStorage({
         const filename = buf.toString('hex') + path.extname(file.originalname);
         const fileInfo = {
           filename: filename,
-          bucketName: 'uploads'
+          bucketName: 'uploads',
+          metadata: { 
+            uploaderId: req.userData.userId,
+            temp: true
+          }
         };
         resolve(fileInfo);
       });
@@ -51,7 +55,7 @@ router.post('/step1', (req, res, next) => {
 
 router.post('/step2/propertyImage', upload.array('file', 20), (req, res, next) => {
   res.status(200).json({
-    request: "success"
+    message: "Images saved successfully. "
   });
 });
 

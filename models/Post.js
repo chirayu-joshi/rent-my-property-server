@@ -27,10 +27,10 @@ const postSchema = mongoose.Schema({
     checkOut: { type: Date, required: true }
   },
   rules: [String],
-  language: [String],
+  languages: [String],
   reviews: [
     {
-      stars: { type: Number, min: 0, max: 5 },
+      stars: { type: Number, min: 0, max: 5, default: 0 },
       from: { type: String },
       review: { type: String }
     }

@@ -34,5 +34,6 @@ app.use('/api/signUp', require('./routes/signUp'));
 app.use('/api/host', checkAuth, require('./routes/host'));
 app.use('/api/images', require('./routes/images'));
 app.use('/api/ext', checkAuth, require('./routes/ext'));
+app.use('/api/stay', require('./routes/stay'));
 
 module.exports = app;

@@ -19,8 +19,28 @@ conn.once('open', () => {
 
 // To fetch an image with given filename.
 // It is an open route, anyone can access it.
-router.get('/:filename', (req, res, next) => {
+router.get('/name/:filename', (req, res, next) => {
   gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        error: 'File not found error'
+      });
+    } else {
+      if (file.contentType === 'image/jpg' || file.contentType === 'image/jpeg') {
+        const readStream = gfs.createReadStream(file.filename);
+        readStream.pipe(res);
+      } else {
+        res.status(404).json({
+          error: 'Not an image'
+        });
+      }
+    }
+  });
+});
+
+// To fetch an image with given id.
+router.get('/id/:id', (req, res, next) => {
+  gfs.files.findOne({ _id: mongoose.Types.ObjectId(req.params.id) }, (err, file) => {
     if (!file || file.length === 0) {
       return res.status(404).json({
         error: 'File not found error'

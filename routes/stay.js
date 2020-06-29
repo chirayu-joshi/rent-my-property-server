@@ -11,9 +11,9 @@ const Post = require('../models/Post');
 // Similar protected route is 'ext'.
 router.get('/position', (req, res, next) => {
   let ip = (req.headers['x-forwarded-for'] || '').split(',').pop().trim() ||
-            req.connection.remoteAddress ||
-            req.socket.remoteAddress ||
-            req.connection.socket.remoteAddress;
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress;
   // ip = ip.slice(7);  // 127.0.0.1 will give error
   ip = '49.34.120.218';
   http
@@ -78,6 +78,23 @@ router.get('/posts/:countryCode', (req, res, next) => {
     .then(resp => {
       res.status(200).json({
         posts: resp
+      });
+    })
+    .catch(err => {
+      res.status(404).json({
+        error: err
+      });
+    });
+});
+
+// To get details about post from post id.
+router.get('/post/:id', (req, res, next) => {
+  Post.findOne({ _id: req.params.id })
+    .exec()
+    .then(resp => {
+      res.status(200).json({
+        post: resp,
+        message: 'Post found successfully'
       });
     })
     .catch(err => {

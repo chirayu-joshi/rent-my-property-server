@@ -32,7 +32,8 @@ const postSchema = mongoose.Schema({
     {
       stars: { type: Number, min: 0, max: 5, default: 0 },
       from: { type: String },
-      review: { type: String }
+      review: { type: String },
+      reviewedAt: { type: Date, default: Date.now() }
     }
   ]
 });

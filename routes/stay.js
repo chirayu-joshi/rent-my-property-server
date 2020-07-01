@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const ipstackApiUrl = require('../configs/default').ipstackApiUrl;
 const ipstackApiKey = require('../configs/secret').ipstackApiKey;
+const checkAuth = require('../middlewares/check-auth');
 
 const Post = require('../models/Post');
 
@@ -88,13 +89,67 @@ router.get('/posts/:countryCode', (req, res, next) => {
 });
 
 // To get details about post from post id.
-router.get('/post/:id', (req, res, next) => {
+router.get('/posts/id/:id', (req, res, next) => {
   Post.findOne({ _id: req.params.id })
     .exec()
     .then(resp => {
       res.status(200).json({
         post: resp,
         message: 'Post found successfully'
+      });
+    })
+    .catch(err => {
+      res.status(404).json({
+        error: err
+      });
+    });
+});
+
+router.post('/post/review', checkAuth, (req, res, next) => {
+  Post
+    .update(
+      { _id: req.body.postId },
+      {
+        $push: {
+          reviews: {
+            stars: req.body.stars,
+            from: req.userData.firstName + ' ' + req.userData.lastName,
+            review: req.body.review
+          }
+        }
+      }
+    )
+    .exec()
+    .then(_ => {
+      Post.findOne({ _id: req.body.postId }, 'reviews')
+        .exec()
+        .then(resp => {
+          res.status(200).json({
+            message: 'Review added successfully',
+            updatedReviews: resp.reviews.reverse()
+          });
+        })
+        .catch(err => {
+          res.status(500).json({
+            message: 'Review added successfully',
+            error: err
+          });
+        });
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
+});
+
+router.get('/post/reviews/:postId', (req, res, next) => {
+  Post.findOne({ _id: req.params.postId }, 'reviews')
+    .exec()
+    .then(resp => {
+      res.status(200).json({
+        message: 'Reviews fetched successfully',
+        reviews: resp.reviews.reverse()
       });
     })
     .catch(err => {
